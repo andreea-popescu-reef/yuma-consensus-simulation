@@ -39,8 +39,13 @@ def main():
         (yumas.YUMA3, base_yuma_params),
         (yumas.YUMA31, base_yuma_params),
         (yumas.YUMA32, base_yuma_params),
+        (yumas.YUMA3B, base_yuma_params),
+        (yumas.YUMA3B1, base_yuma_params),
+        (yumas.YUMA3B2, base_yuma_params),
         (yumas.YUMA4, yuma4_params),
         (yumas.YUMA4_LIQUID, yuma4_liquid_params),
+        (yumas.YUMA4B, yuma4_params),
+        (yumas.YUMA4B_LIQUID, yuma4_liquid_params),
     ]
 
     chart_table = generate_chart_table(

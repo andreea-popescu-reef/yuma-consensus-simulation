@@ -11,7 +11,9 @@ from yuma_simulations.yumas import (
     Yuma,
     Yuma2,
     Yuma3,
+    Yuma3B,
     Yuma4,
+    Yuma4B,
     YumaRust,
     YumaSimulationNames,
     YumaParams,
@@ -60,15 +62,23 @@ def run_simulation(
             result = Yuma2(W=W, W_prev=W_prev, S=S, B_old=B_state, config=yuma_config)
             B_state = result["validator_ema_bond"]
             W_prev = result["weight"]
-        elif yuma_version == simulation_names.YUMA3:
-            result = Yuma3(W, S, B_old=B_state, config=yuma_config)
+        elif yuma_version in [simulation_names.YUMA3, simulation_names.YUMA3B]:
+            result = (
+                Yuma3B(W, S, B_old=B_state, config=yuma_config)
+                if yuma_version == simulation_names.YUMA3B
+                else Yuma3(W, S, B_old=B_state, config=yuma_config)
+            )
             B_state = result["validator_bonds"]
-        elif yuma_version == simulation_names.YUMA31:
+        elif yuma_version in [simulation_names.YUMA31, simulation_names.YUMA3B1]:
             if B_state is not None and epoch == case.reset_bonds_epoch:
                 B_state[:, case.reset_bonds_index] = 0.0
-            result = Yuma3(W, S, B_old=B_state, config=yuma_config)
+            result = (
+                Yuma3B(W, S, B_old=B_state, config=yuma_config)
+                if yuma_version == simulation_names.YUMA3B1
+                else Yuma3(W, S, B_old=B_state, config=yuma_config)
+            )
             B_state = result["validator_bonds"]
-        elif yuma_version == simulation_names.YUMA32:
+        elif yuma_version in [simulation_names.YUMA32, simulation_names.YUMA3B2]:
             if (
                 B_state is not None
                 and epoch == case.reset_bonds_epoch
@@ -76,10 +86,20 @@ def run_simulation(
                 and server_consensus_weight[case.reset_bonds_index] == 0.0
             ):
                 B_state[:, case.reset_bonds_index] = 0.0
-            result = Yuma3(W, S, B_old=B_state, config=yuma_config)
+            result = (
+                Yuma3B(W, S, B_old=B_state, config=yuma_config)
+                if yuma_version == simulation_names.YUMA3B
+                else Yuma3(W, S, B_old=B_state, config=yuma_config)
+            )
             B_state = result["validator_bonds"]
             server_consensus_weight = result["server_consensus_weight"]
-        elif yuma_version in [simulation_names.YUMA4, simulation_names.YUMA4_LIQUID]:
+        elif yuma_version in [
+            simulation_names.YUMA4,
+            simulation_names.YUMA4_LIQUID,
+            simulation_names.YUMA4B_LIQUID,
+            simulation_names.YUMA4B,
+            simulation_names.YUMA4B_LIQUID,
+        ]:
             if (
                 B_state is not None
                 and epoch == case.reset_bonds_epoch
@@ -87,7 +107,12 @@ def run_simulation(
                 and server_consensus_weight[case.reset_bonds_index] == 0.0
             ):
                 B_state[:, case.reset_bonds_index] = 0.0
-            result = Yuma4(W, S, B_old=B_state, config=yuma_config)
+            result = (
+                Yuma4B(W, S, B_old=B_state, config=yuma_config)
+                if yuma_version
+                in [simulation_names.YUMA4B, simulation_names.YUMA4B_LIQUID]
+                else Yuma4(W, S, B_old=B_state, config=yuma_config)
+            )
             B_state = result["validator_bonds"]
             server_consensus_weight = result["server_consensus_weight"]
         elif yuma_version == "Yuma 0 (subtensor)":
@@ -163,7 +188,10 @@ def generate_chart_table(
                     full_case_name = (
                         f"{full_case_name} - beta={yuma_config.bond_penalty}"
                     )
-                elif yuma_version in [yuma_names.YUMA4_LIQUID]:
+                elif yuma_version in [
+                    yuma_names.YUMA4_LIQUID,
+                    yuma_names.YUMA4B_LIQUID,
+                ]:
                     full_case_name = f"{full_case_name} [{yuma_config.alpha_low}, {yuma_config.alpha_high}]"
 
                 (

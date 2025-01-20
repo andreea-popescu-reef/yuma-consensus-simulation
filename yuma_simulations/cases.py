@@ -542,9 +542,9 @@ class Case12(BaseCase):
 @dataclass
 @register_case("Case 13")
 class Case13(BaseCase):
-    name: str = (
-        "Case 13 - Big vali supports server 2, small validator/s support server 1"
-    )
+    name: (
+        str
+    ) = "Case 13 - Big vali supports server 2, small validator/s support server 1"
     validators: list[str] = field(
         default_factory=lambda: [
             "Big vali. (0.8)",

@@ -1,7 +1,9 @@
 from .yuma import Yuma as Yuma
 from .yuma2 import Yuma2 as Yuma2
 from .yuma3 import Yuma3 as Yuma3
+from .yuma3b import Yuma3B as Yuma3B
 from .yuma4 import Yuma4 as Yuma4
+from .yuma4b import Yuma4B as Yuma4B
 from .yuma_rust import YumaRust as YumaRust
 from .utils import (
     SimulationHyperparameters as SimulationHyperparameters,

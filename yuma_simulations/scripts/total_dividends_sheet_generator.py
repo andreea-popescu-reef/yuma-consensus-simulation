@@ -30,8 +30,13 @@ def main():
         (yumas.YUMA3, base_yuma_params),
         (yumas.YUMA31, base_yuma_params),
         (yumas.YUMA32, base_yuma_params),
+        (yumas.YUMA3B, base_yuma_params),
+        (yumas.YUMA3B1, base_yuma_params),
+        (yumas.YUMA3B2, base_yuma_params),
         (yumas.YUMA4, base_yuma_params),
         (yumas.YUMA4_LIQUID, liquid_alpha_on_yuma_params),
+        (yumas.YUMA4B, yuma4_params),
+        (yumas.YUMA4B_LIQUID, yuma4_liquid_params),
     ]
 
     print("Starting generation of total dividends table.")

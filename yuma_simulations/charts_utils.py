@@ -1,5 +1,5 @@
 """
-This module provides utilities for calculating and visualizing simulation results. 
+This module provides utilities for calculating and visualizing simulation results.
 It includes functions for generating plots, calculating dividends, and preparing data for bonds and incentives.
 """
 
@@ -346,7 +346,6 @@ def _plot_to_base64() -> str:
     buf.close()
     plt.close()
     return f'<img src="data:image/png;base64,{encoded_image}" style="max-width:1200px; height:auto;" draggable="false">'
-
 
 
 def _set_default_xticks(ax: Axes, num_epochs: int) -> None:

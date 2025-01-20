@@ -1,5 +1,5 @@
 from dataclasses import replace
-from yuma_simulations.yumas import (
+from yuma_simulations.yumas.utils import (
     YumaParams,
     SimulationHyperparameters,
     YumaSimulationNames,

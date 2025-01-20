@@ -8,14 +8,14 @@ import torch
 from IPython.display import HTML
 from yuma_simulations.cases import BaseCase
 from yuma_simulations.yumas import (
-    YumaRust,
     Yuma,
     Yuma2,
     Yuma3,
     Yuma4,
-    YumaConfig,
+    YumaRust,
     YumaSimulationNames,
     YumaParams,
+    YumaConfig,
     SimulationHyperparameters,
 )
 from yuma_simulations.charts_utils import (
@@ -163,12 +163,8 @@ def generate_chart_table(
                     full_case_name = (
                         f"{full_case_name} - beta={yuma_config.bond_penalty}"
                     )
-                elif yuma_version in [
-                    yuma_names.YUMA4_LIQUID
-                ]:
-                    full_case_name = (
-                        f"{full_case_name} [{yuma_config.alpha_low}, {yuma_config.alpha_high}]"
-                    )
+                elif yuma_version in [yuma_names.YUMA4_LIQUID]:
+                    full_case_name = f"{full_case_name} [{yuma_config.alpha_low}, {yuma_config.alpha_high}]"
 
                 (
                     dividends_per_validator,

@@ -1,6 +1,6 @@
 from yuma_simulations.cases import cases
 from yuma_simulations.simulation_utils import generate_total_dividends_table
-from yuma_simulations.yumas import (
+from yuma_simulations.yumas.utils import (
     YumaParams,
     SimulationHyperparameters,
     YumaSimulationNames,
@@ -11,7 +11,7 @@ def main():
     # Define simulation hyperparameters
     simulation_hyperparameters = SimulationHyperparameters(
         bond_penalty=0.0,
-)
+    )
     # Make sure the output file name matches the bond_penalty parameter
     file_name = "total_dividends_b0.csv"
 

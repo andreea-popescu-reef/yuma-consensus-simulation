@@ -55,12 +55,7 @@ def YumaRust(
     T = (R / P).nan_to_num(0)
     T_v = W_clipped.sum(dim=1) / W.sum(dim=1)
 
-    # === Bonds ===
-    B = S.view(-1, 1) * W_clipped
-    B_sum = B.sum(dim=0)
-    B = B / (B_sum + 1e-6)
-    B = torch.nan_to_num(B)
-
+    # === Liquid Alpha Adjustment ===
     a = b = torch.tensor(float("nan"))
     bond_alpha = config.bond_alpha
     if config.liquid_alpha:
@@ -85,8 +80,14 @@ def YumaRust(
         alpha = 1 / (1 + math.e ** (-a * C + b))  # alpha to the old weight
         bond_alpha = 1 - torch.clamp(alpha, config.alpha_low, config.alpha_high)
 
+    # === Bonds ===
+    B = S.view(-1, 1) * W_clipped
+    B = B / (B.sum(dim=0) + 1e-6)
+    B = torch.nan_to_num(B)
+
     if B_old is not None:
-        B_ema = bond_alpha * B + (1 - bond_alpha) * B_old
+        B_decayed = B_old * (1 - bond_alpha)
+        B_ema = bond_alpha * B + B_decayed
     else:
         B_ema = B.clone()
 
@@ -94,8 +95,10 @@ def YumaRust(
     B_ema = B_ema / (B_ema_sum + 1e-6)
     B_ema = torch.nan_to_num(B_ema)
 
-    # === Dividend Calculation===
+    # === Dividends Calculation ===
     D = (B_ema * I).sum(dim=1)
+
+    # Normalize dividends
     D_normalized = D / (D.sum() + 1e-6)
 
     return {

@@ -24,7 +24,7 @@ def Yuma4(
     P = (S.view(-1, 1) * W).sum(dim=0)
 
     # === Consensus ===
-    C = torch.zeros(W.shape[1])
+    C = torch.zeros(W.shape[1], dtype=torch.float64)
 
     for i, miner_weight in enumerate(W.T):
         c_high = 1.0
@@ -89,9 +89,8 @@ def Yuma4(
     remaining_capacity = torch.clamp(remaining_capacity, min=0.0)
 
     # Each validator can increase bonds by at most bond_alpha per epoch towards the cap
-    purchase_increment = (
-        bond_alpha * W
-    )  # Validators allocate their purchase across miners based on weights
+    # Validators allocate their purchase across miners based on weights
+    purchase_increment = bond_alpha * W
     # Ensure that purchase does not exceed remaining capacity
     purchase = torch.min(purchase_increment, remaining_capacity)
 

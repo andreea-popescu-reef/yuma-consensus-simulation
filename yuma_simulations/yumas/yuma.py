@@ -55,11 +55,7 @@ def Yuma(
     T = (R / P).nan_to_num(0)
     T_v = W_clipped.sum(dim=1) / W.sum(dim=1)
 
-    # === Bonds ===
-    W_b = (1 - config.bond_penalty) * W + config.bond_penalty * W_clipped
-    B = S.view(-1, 1) * W_b / (S.view(-1, 1) * W_b).sum(dim=0)
-    B = B.nan_to_num(0)
-
+    # === Liquid Alpha Adjustment ===
     a = b = torch.tensor(float("nan"))
     bond_alpha = config.bond_alpha
     if config.liquid_alpha:
@@ -84,13 +80,22 @@ def Yuma(
         alpha = 1 / (1 + math.e ** (-a * C + b))  # alpha to the old weight
         bond_alpha = 1 - torch.clamp(alpha, config.alpha_low, config.alpha_high)
 
+    # === Bonds ===
+    W_b = (1 - config.bond_penalty) * W + config.bond_penalty * W_clipped
+    B = S.view(-1, 1) * W_b
+    B_sum = B.sum(dim=0)
+    B = B / B_sum
+    B = B.nan_to_num(0)
+
     if B_old is not None:
         B_ema = bond_alpha * B + (1 - bond_alpha) * B_old
     else:
         B_ema = B
 
-    # === Dividend ===
+    # === Dividends Calculation ===
     D = (B_ema * I).sum(dim=1)
+
+    # Normalize dividends
     D_normalized = D / (D.sum() + 1e-6)
 
     return {

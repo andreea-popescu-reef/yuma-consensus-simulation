@@ -28,7 +28,7 @@ def Yuma2(
     P = (S.view(-1, 1) * W).sum(dim=0)
 
     # === Consensus ===
-    C = torch.zeros(W.shape[1])
+    C = torch.zeros(W.shape[1], dtype=torch.float64)
 
     for i, miner_weight in enumerate(W.T):
         c_high = 1.0
@@ -59,11 +59,7 @@ def Yuma2(
     T = (R / P).nan_to_num(0)
     T_v = W_clipped.sum(dim=1) / W.sum(dim=1)
 
-    # === Bonds ===
-    W_b = (1 - config.bond_penalty) * W_prev + config.bond_penalty * W_clipped
-    B = S.view(-1, 1) * W_b / (S.view(-1, 1) * W_b).sum(dim=0)
-    B = B.nan_to_num(0)
-
+    # === Liquid Alpha Adjustment ===
     a = b = torch.tensor(float("nan"))
     bond_alpha = config.bond_alpha
     if config.liquid_alpha:
@@ -88,13 +84,20 @@ def Yuma2(
         alpha = 1 / (1 + math.e ** (-a * C + b))  # alpha to the old weight
         bond_alpha = 1 - torch.clamp(alpha, config.alpha_low, config.alpha_high)
 
+    # === Bonds ===
+    W_b = (1 - config.bond_penalty) * W_prev + config.bond_penalty * W_clipped
+    B = S.view(-1, 1) * W_b / (S.view(-1, 1) * W_b).sum(dim=0)
+    B = B.nan_to_num(0)
+
     if B_old is not None:
         B_ema = bond_alpha * B + (1 - bond_alpha) * B_old
     else:
         B_ema = B
 
-    # === Dividend ===
+    # === Dividends Calculation ===
     D = (B_ema * I).sum(dim=1)
+
+    # Normalize dividends
     D_normalized = D / (D.sum() + 1e-6)
 
     return {

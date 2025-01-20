@@ -25,7 +25,7 @@ def Yuma3(
     P = (S.view(-1, 1) * W).sum(dim=0)
 
     # === Consensus ===
-    C = torch.zeros(W.shape[1])
+    C = torch.zeros(W.shape[1], dtype=torch.float64)
 
     for i, miner_weight in enumerate(W.T):
         c_high = 1.0
@@ -79,8 +79,10 @@ def Yuma3(
     B = decay * B_old + purchase
     B = torch.min(B, capacity_per_bond)  # Enforce capacity constraints
 
-    # === Validator reward ===
+    # === Dividends Calculation ===
     D = (B * I).sum(dim=1)
+
+    # Normalize dividends
     D_normalized = D / (D.sum() + 1e-6)
 
     return {

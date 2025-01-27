@@ -97,7 +97,7 @@ def Yuma4B(
     B = B_decayed + purchase
     B = torch.clamp(B, max=1.0)
 
-    B_scaled = B / B.sum(dim=1, keepdim=True)
+    B_scaled = B / B.sum(dim=0, keepdim=True)
 
     # === Dividends Calculation ===
     total_bonds_per_validator = (B_scaled * I).sum(

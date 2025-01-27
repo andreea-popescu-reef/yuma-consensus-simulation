@@ -79,7 +79,7 @@ def Yuma3B(
     B = decay * B_old + purchase
     B = torch.min(B, capacity_per_bond)  # Enforce capacity constraints
 
-    B_scaled = B / B.sum(dim=1, keepdim=True)
+    B_scaled = B / B.sum(dim=0, keepdim=True)
 
     # === Dividends Calculation ===
     D = (B_scaled * I).sum(dim=1)
